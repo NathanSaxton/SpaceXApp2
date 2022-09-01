@@ -1,0 +1,92 @@
+﻿@page "/fetchdata"
+@inject HttpClient Http
+
+<h1 class="text-center text-white">SpaceX Launches</h1>
+
+<h6 class="text-center text-white">Welcome astro enthusiasts!</h6>
+
+@if (launches == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    Console.WriteLine(launches);
+    <table class="table table-light text-center" id="data-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Rocket Name</th>
+                <th>Results</th>
+                <th>Highest Payload</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var launch in launches)
+            {
+            <tr>
+                <td>@launch.Date_utc.AddHours(-6)</td>
+                <td>@launch.Name</td>
+                @if (launch.Success == true)
+                {
+                    <td>Success!</td>
+                }
+                else
+                {
+                    <td>Failed..</td>
+                }
+                <td>
+                    @foreach (var payload in launch.Payloads)
+                    {
+                        if (highestPayloadString == "")
+                        {
+                            highestPayloadString = payload;
+                        }
+                        else
+                        {
+                            for (int i = 0; i < payload.Length; i++)
+                            {
+                                int checkedLoadChar = int.Parse(payload[i].ToString(), System.Globalization.NumberStyles.HexNumber);
+                                int highestLoadChar = int.Parse(highestPayloadString[i].ToString(), System.Globalization.NumberStyles.HexNumber);
+                                if (checkedLoadChar > highestLoadChar)
+                                {
+                                    i += payload.Length;
+                                    highestPayloadString = payload;
+                                }
+                                else if (checkedLoadChar < highestLoadChar)
+                                {
+                                    i += payload.Length;
+                                }
+                            }
+                        }
+                    }
+                    @highestPayloadString
+                </td>
+            </tr>
+            highestPayloadString = "";
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private SpaceXLaunches[] launches;
+
+    protected override async Task OnInitializedAsync()
+    {
+        launches = await Http.GetFromJsonAsync<SpaceXLaunches[]>("https://api.spacexdata.com/v5/launches/past");
+    }
+
+    private string highestPayloadString = "";
+
+    public class SpaceXLaunches
+    {
+        public DateTime Date_utc { get; set; }
+
+        public string Name { get; set; }
+
+        public bool? Success { get; set; }
+
+        public string[] Payloads { get; set; }
+    }
+}
