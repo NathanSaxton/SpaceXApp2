@@ -91,16 +91,19 @@ using SpaceXApp.Shared;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 72 "E:\Nathan-Programming-Stuff\Projects\SpaceXApp\SpaceXApp2\SpaceXApp\Pages\FetchData.razor"
+#line 76 "E:\Nathan-Programming-Stuff\Projects\SpaceXApp\SpaceXApp2\SpaceXApp\Pages\FetchData.razor"
        
     private SpaceXLaunches[] launches;
+    List<SpaceXLaunches> orderedLaunches = new List<SpaceXLaunches>();
+    private LaunchPayloads[] payloadDetails;
+    List<LaunchPayloads> launchPayloads = new List<LaunchPayloads>();
+    private int payloadCount = 1;
 
     protected override async Task OnInitializedAsync()
     {
         launches = await Http.GetFromJsonAsync<SpaceXLaunches[]>("https://api.spacexdata.com/v5/launches/past");
+        payloadDetails = await Http.GetFromJsonAsync<LaunchPayloads[]>("https://api.spacexdata.com/v4/payloads");
     }
-
-    private string highestPayloadString = "";
 
     public class SpaceXLaunches
     {
@@ -111,6 +114,37 @@ using SpaceXApp.Shared;
         public bool? Success { get; set; }
 
         public string[] Payloads { get; set; }
+
+        public SpaceXLaunches(DateTime date_utc, string name, bool? success, string[] payloads)
+        {
+            this.Date_utc = date_utc;
+            this.Name = name;
+            this.Success = success;
+            this.Payloads = payloads;
+        }
+
+        public override string ToString()
+        {
+            return "[" + Date_utc + ", " + Name + ", " + Success + ", " + Payloads + "]";
+        }
+    }
+
+    public class LaunchPayloads
+    {
+        public string Id { get; set; }
+
+        public float? Mass_kg { get; set; }
+
+        public LaunchPayloads(string id, float? mass_kg)
+        {
+            this.Id = id;
+            this.Mass_kg = mass_kg;
+        }
+
+        public override string ToString()
+        {
+            return "[" + Id + ", " + Mass_kg + "]";
+        }
     }
 
 #line default

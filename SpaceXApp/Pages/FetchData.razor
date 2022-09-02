@@ -1,6 +1,7 @@
 ﻿@page "/fetchdata"
 @inject HttpClient Http
 
+
 <h1 class="text-center text-white">SpaceX Launches</h1>
 
 <h6 class="text-center text-white">Welcome astro enthusiasts!</h6>
@@ -11,59 +12,62 @@
 }
 else
 {
-    Console.WriteLine(launches);
+    @foreach (var launch in launches)
+    {
+        if(launch.Payloads.Length > payloadCount)
+        {
+            payloadCount = launch.Payloads.Length;
+        }
+        orderedLaunches.Add(new SpaceXLaunches(launch.Date_utc, launch.Name, launch.Success, launch.Payloads));
+        if (launch == launches[launches.Length - 1])
+        {
+            orderedLaunches = orderedLaunches.OrderByDescending(x => x.Date_utc).ToList();
+        }
+    }
     <table class="table table-light text-center" id="data-table">
         <thead>
             <tr>
                 <th>Date</th>
                 <th>Rocket Name</th>
                 <th>Results</th>
-                <th>Highest Payload</th>
+                <th class="text-left" colspan="@payloadCount">Payloads Ranked by Mass (Highest to Lowest)</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var launch in launches)
+            @foreach (var orderedLaunch in orderedLaunches)
             {
-            <tr>
-                <td>@launch.Date_utc.AddHours(-6)</td>
-                <td>@launch.Name</td>
-                @if (launch.Success == true)
-                {
-                    <td>Success!</td>
-                }
-                else
-                {
-                    <td>Failed..</td>
-                }
-                <td>
-                    @foreach (var payload in launch.Payloads)
+                launchPayloads.Clear();
+                <tr>
+                    <td>@orderedLaunch.Date_utc.AddHours(-6)</td>
+                    <td>@orderedLaunch.Name</td>
+                    @if (orderedLaunch.Success == true)
                     {
-                        if (highestPayloadString == "")
+                        <td>Success!</td>
+                    }
+                    else
+                    {
+                        <td>Failed..</td>
+                    }
+                    @foreach (var payload in orderedLaunch.Payloads)
+                    {
+                        foreach (var payloadDetail in payloadDetails)
                         {
-                            highestPayloadString = payload;
-                        }
-                        else
-                        {
-                            for (int i = 0; i < payload.Length; i++)
+                            if (payload == payloadDetail.Id)
                             {
-                                int checkedLoadChar = int.Parse(payload[i].ToString(), System.Globalization.NumberStyles.HexNumber);
-                                int highestLoadChar = int.Parse(highestPayloadString[i].ToString(), System.Globalization.NumberStyles.HexNumber);
-                                if (checkedLoadChar > highestLoadChar)
-                                {
-                                    i += payload.Length;
-                                    highestPayloadString = payload;
-                                }
-                                else if (checkedLoadChar < highestLoadChar)
-                                {
-                                    i += payload.Length;
-                                }
+                                launchPayloads.Add(new LaunchPayloads(payloadDetail.Id, payloadDetail.Mass_kg));
+                                break;
                             }
                         }
+                        if (payload == orderedLaunch.Payloads[orderedLaunch.Payloads.Length - 1])
+                        {
+                            launchPayloads = launchPayloads.Where(x => x.Mass_kg.HasValue).OrderBy(x => -x.Mass_kg).ToList();
+                        }
                     }
-                    @highestPayloadString
-                </td>
-            </tr>
-            highestPayloadString = "";
+                    @foreach (var payload in launchPayloads)
+                    {
+                        <td>@payload.Mass_kg</td>
+                    }
+                </tr>
             }
         </tbody>
     </table>
@@ -71,13 +75,16 @@ else
 
 @code {
     private SpaceXLaunches[] launches;
+    List<SpaceXLaunches> orderedLaunches = new List<SpaceXLaunches>();
+    private LaunchPayloads[] payloadDetails;
+    List<LaunchPayloads> launchPayloads = new List<LaunchPayloads>();
+    private int payloadCount = 1;
 
     protected override async Task OnInitializedAsync()
     {
         launches = await Http.GetFromJsonAsync<SpaceXLaunches[]>("https://api.spacexdata.com/v5/launches/past");
+        payloadDetails = await Http.GetFromJsonAsync<LaunchPayloads[]>("https://api.spacexdata.com/v4/payloads");
     }
-
-    private string highestPayloadString = "";
 
     public class SpaceXLaunches
     {
@@ -88,5 +95,36 @@ else
         public bool? Success { get; set; }
 
         public string[] Payloads { get; set; }
+
+        public SpaceXLaunches(DateTime date_utc, string name, bool? success, string[] payloads)
+        {
+            this.Date_utc = date_utc;
+            this.Name = name;
+            this.Success = success;
+            this.Payloads = payloads;
+        }
+
+        public override string ToString()
+        {
+            return "[" + Date_utc + ", " + Name + ", " + Success + ", " + Payloads + "]";
+        }
+    }
+
+    public class LaunchPayloads
+    {
+        public string Id { get; set; }
+
+        public float? Mass_kg { get; set; }
+
+        public LaunchPayloads(string id, float? mass_kg)
+        {
+            this.Id = id;
+            this.Mass_kg = mass_kg;
+        }
+
+        public override string ToString()
+        {
+            return "[" + Id + ", " + Mass_kg + "]";
+        }
     }
 }
