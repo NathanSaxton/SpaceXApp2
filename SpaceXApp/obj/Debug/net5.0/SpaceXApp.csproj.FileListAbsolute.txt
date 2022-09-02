@@ -626,5 +626,3 @@ E:\Nathan-Programming-Stuff\Projects\SpaceXApp\SpaceXApp2\SpaceXApp\obj\Debug\ne
 E:\Nathan-Programming-Stuff\Projects\SpaceXApp\SpaceXApp2\SpaceXApp\obj\Debug\net5.0\ref\SpaceXApp.dll
 E:\Nathan-Programming-Stuff\Projects\SpaceXApp\SpaceXApp2\SpaceXApp\obj\Debug\net5.0\SpaceXApp.pdb
 E:\Nathan-Programming-Stuff\Projects\SpaceXApp\SpaceXApp2\SpaceXApp\obj\Debug\net5.0\SpaceXApp.csproj.AssemblyReference.cache
-E:\Nathan-Programming-Stuff\Projects\SpaceXApp\SpaceXApp2\SpaceXApp\bin\Debug\net5.0\launches.json
-E:\Nathan-Programming-Stuff\Projects\SpaceXApp\SpaceXApp2\SpaceXApp\bin\Debug\net5.0\payloads.json

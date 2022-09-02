@@ -195,11 +195,11 @@
       "mscorlib.dll": "sha256-zMI\/dXK7DoZZ9Qm9U9\/jRN4iQ9Ss3w8\/rwQQxC6SW9Y=",
       "netstandard.dll": "sha256-W3q3PN+lpRB+tRJEIhtMgYOGFv0pauEeeCS9iIRkKAM=",
       "System.Private.CoreLib.dll": "sha256-9rUJv1mXEQdGt\/kWiJ1ITPPzp3cAi3lSmqHVTisp7w0=",
-      "SpaceXApp.dll": "sha256-9+M00QG3+1ReMYFRYK678nX4sEj7828gQ01xEp6tl5M="
+      "SpaceXApp.dll": "sha256-KQHBQeFHk+5c+H2muBVKRIFMZrSA2Vug0FdDe\/KB5Zs="
     },
     "lazyAssembly": null,
     "pdb": {
-      "SpaceXApp.pdb": "sha256-NQLOZftICMSn7sRKXC0fC8D\/InBDtiUfyKKp60VfHzg="
+      "SpaceXApp.pdb": "sha256-hpYOgdQN21u30ALhraxRP0WKCn4O74eG2sXEE\/\/yk6I="
     },
     "runtime": {
       "dotnet.timezones.blat": "sha256-8oJip361m8OrfLRJOuIeswWKaoxtT27\/wINCxhn+s4c=",

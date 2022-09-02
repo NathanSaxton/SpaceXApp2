@@ -43,6 +43,9 @@ else
                     @if (orderedLaunch.Success == true)
                     {
                         <td>Success!</td>
+                    } else if(orderedLaunch.Date_utc.AddHours(-6) > DateTime.Today)
+                    {
+                        <td>TBD</td>
                     }
                     else
                     {
@@ -82,7 +85,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        launches = await Http.GetFromJsonAsync<SpaceXLaunches[]>("https://api.spacexdata.com/v5/launches/past");
+        launches = await Http.GetFromJsonAsync<SpaceXLaunches[]>("https://api.spacexdata.com/v5/launches");
         payloadDetails = await Http.GetFromJsonAsync<LaunchPayloads[]>("https://api.spacexdata.com/v4/payloads");
     }
 

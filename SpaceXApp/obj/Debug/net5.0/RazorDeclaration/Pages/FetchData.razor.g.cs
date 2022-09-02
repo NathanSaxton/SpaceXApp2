@@ -91,7 +91,7 @@ using SpaceXApp.Shared;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 76 "E:\Nathan-Programming-Stuff\Projects\SpaceXApp\SpaceXApp2\SpaceXApp\Pages\FetchData.razor"
+#line 79 "E:\Nathan-Programming-Stuff\Projects\SpaceXApp\SpaceXApp2\SpaceXApp\Pages\FetchData.razor"
        
     private SpaceXLaunches[] launches;
     List<SpaceXLaunches> orderedLaunches = new List<SpaceXLaunches>();
@@ -101,7 +101,7 @@ using SpaceXApp.Shared;
 
     protected override async Task OnInitializedAsync()
     {
-        launches = await Http.GetFromJsonAsync<SpaceXLaunches[]>("https://api.spacexdata.com/v5/launches/past");
+        launches = await Http.GetFromJsonAsync<SpaceXLaunches[]>("https://api.spacexdata.com/v5/launches");
         payloadDetails = await Http.GetFromJsonAsync<LaunchPayloads[]>("https://api.spacexdata.com/v4/payloads");
     }
 
