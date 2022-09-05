@@ -12,14 +12,14 @@
 }
 else
 {
-    @foreach (var launch in launches)
+    @foreach (var launch in launches)//iterate through the initial collection of launches
     {
-        if(launch.Payloads.Length > payloadCount)
+        if(launch.Payloads.Length > payloadCount) //compare and set the count for the highest number of payloads that will determine the number of columns in the chart
         {
             payloadCount = launch.Payloads.Length;
         }
-        orderedLaunches.Add(new SpaceXLaunches(launch.Date_utc, launch.Name, launch.Success, launch.Payloads));
-        if (launch == launches[launches.Length - 1])
+        orderedLaunches.Add(new SpaceXLaunches(launch.Date_utc, launch.Name, launch.Success, launch.Payloads));//add each launch to the list that will be organized
+        if (launch == launches[launches.Length - 1])//in the last iteration organize the list
         {
             orderedLaunches = orderedLaunches.OrderByDescending(x => x.Date_utc).ToList();
         }
@@ -34,13 +34,13 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var orderedLaunch in orderedLaunches)
+            @foreach (var orderedLaunch in orderedLaunches)//iterate through the ordered launches
             {
-                launchPayloads.Clear();
+                launchPayloads.Clear();//clear the payloads list before every iteration
                 <tr>
-                    <td>@orderedLaunch.Date_utc.AddHours(-6)</td>
+                    <td>@orderedLaunch.Date_utc.AddHours(-6)</td><!--set time to central time-->
                     <td>@orderedLaunch.Name</td>
-                    @if (orderedLaunch.Success == true)
+                    @if (orderedLaunch.Success == true)//determine the status of the launch
                     {
                         <td>Success!</td>
                     } else if(orderedLaunch.Date_utc.AddHours(-6) > DateTime.Today)
@@ -51,22 +51,22 @@ else
                     {
                         <td>Failed..</td>
                     }
-                    @foreach (var payload in orderedLaunch.Payloads)
+                    @foreach (var payload in orderedLaunch.Payloads)//iterate through each payload in the current launch
                     {
-                        foreach (var payloadDetail in payloadDetails)
+                        foreach (var payloadDetail in payloadDetails)//iterate through the payload details to find a matching payload id
                         {
                             if (payload == payloadDetail.Id)
                             {
-                                launchPayloads.Add(new LaunchPayloads(payloadDetail.Id, payloadDetail.Mass_kg));
+                                launchPayloads.Add(new LaunchPayloads(payloadDetail.Id, payloadDetail.Mass_kg));//add the matching payload id to the current payload list then break the loop to prevent unecessary iterations
                                 break;
                             }
                         }
-                        if (payload == orderedLaunch.Payloads[orderedLaunch.Payloads.Length - 1])
+                        if (payload == orderedLaunch.Payloads[orderedLaunch.Payloads.Length - 1])//in the last iteration organize the payload list
                         {
                             launchPayloads = launchPayloads.Where(x => x.Mass_kg.HasValue).OrderBy(x => -x.Mass_kg).ToList();
                         }
                     }
-                    @foreach (var payload in launchPayloads)
+                    @foreach (var payload in launchPayloads)//print the mass of each payload in the payload list
                     {
                         <td>@payload.Mass_kg</td>
                     }
@@ -77,16 +77,16 @@ else
 }
 
 @code {
-    private SpaceXLaunches[] launches;
-    List<SpaceXLaunches> orderedLaunches = new List<SpaceXLaunches>();
-    private LaunchPayloads[] payloadDetails;
-    List<LaunchPayloads> launchPayloads = new List<LaunchPayloads>();
-    private int payloadCount = 1;
+    private SpaceXLaunches[] launches;//initial launches
+    List<SpaceXLaunches> orderedLaunches = new List<SpaceXLaunches>();//organized launches
+    private LaunchPayloads[] payloadDetails;//initial payloads
+    List<LaunchPayloads> launchPayloads = new List<LaunchPayloads>();//organized payloads
+    private int payloadCount = 1;//find the greatest number of payloads to determine the size of the table
 
     protected override async Task OnInitializedAsync()
     {
-        launches = await Http.GetFromJsonAsync<SpaceXLaunches[]>("https://api.spacexdata.com/v5/launches");
-        payloadDetails = await Http.GetFromJsonAsync<LaunchPayloads[]>("https://api.spacexdata.com/v4/payloads");
+        launches = await Http.GetFromJsonAsync<SpaceXLaunches[]>("https://api.spacexdata.com/v5/launches");//call the list of launches from the api
+        payloadDetails = await Http.GetFromJsonAsync<LaunchPayloads[]>("https://api.spacexdata.com/v4/payloads");//call the payload details from the api
     }
 
     public class SpaceXLaunches
@@ -99,7 +99,7 @@ else
 
         public string[] Payloads { get; set; }
 
-        public SpaceXLaunches(DateTime date_utc, string name, bool? success, string[] payloads)
+        public SpaceXLaunches(DateTime date_utc, string name, bool? success, string[] payloads)//launches constructor to recreate the launch list
         {
             this.Date_utc = date_utc;
             this.Name = name;
@@ -119,7 +119,7 @@ else
 
         public float? Mass_kg { get; set; }
 
-        public LaunchPayloads(string id, float? mass_kg)
+        public LaunchPayloads(string id, float? mass_kg)//payload constructor to recreate the payload list
         {
             this.Id = id;
             this.Mass_kg = mass_kg;
